@@ -2,6 +2,7 @@ package mk.ukim.finki.wpaud.repository;
 
 import mk.ukim.finki.wpaud.model.Role;
 import mk.ukim.finki.wpaud.model.User;
+import mk.ukim.finki.wpaud.model.exceptions.UserNotFoundException;
 import mk.ukim.finki.wpaud.model.projections.UserProjection;
 import mk.ukim.finki.wpaud.repository.jpa.UserRepository;
 import org.junit.Assert;
@@ -44,5 +45,21 @@ public class UserRepositoryTest {
         Assert.assertEquals("user", userProjection.getUsername());
         Assert.assertEquals("user", userProjection.getName());
         Assert.assertEquals("user", userProjection.getSurname());
+    }
+
+    @Test
+    public void testOptimisticLock() {
+        User user1 = this.userRepository.findByUsername("user")
+                .orElseThrow(() -> new UserNotFoundException("user"));
+        User user2 = this.userRepository.findByUsername("user")
+                .orElseThrow(() -> new UserNotFoundException("user"));
+
+        user1.setName("user1");
+        user2.setName("user2");
+
+        this.userRepository.save(user1);
+        this.userRepository.save(user2);
+
+        // dava DataIntegrityViolationException?
     }
 }
