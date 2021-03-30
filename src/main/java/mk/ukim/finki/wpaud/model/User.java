@@ -41,9 +41,6 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @ManyToOne
-    private Discount discount;
-
     public User() { }
 
     public User(String username, String password, String name, String surname, Role role) {
